@@ -9,18 +9,25 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Intents setzen
+# Intents setup
 intents = discord.Intents.default()
 intents.voice_states = True
 intents.guilds = True
 intents.members = True
 intents.message_content = True
 
-# Bot erstellen
+# Bot setup
 bot = commands.Bot(command_prefix="/", intents=intents)
 
 # Multible Channel IDs
 ALLOWED_CHANNEL_IDS = os.getenv("DISCORD_CREATE_CHANNEL_ID", "").split("/")
+
+# Message ID for Reaction roles
+reaction_message_id = int(os.getenv("DISCORD_RULES_MESSAGE_ID"))
+
+reaction_roles = {
+    "✅": "Verified",  # Emoji : Rollenname
+}
 
 
 @bot.event
@@ -30,16 +37,12 @@ async def on_ready():
 
 
 # Slash Commands
-
-
-# Bot-Info Latenz
 @bot.tree.command(name="ping", description="Zeigt die Latenz des Bots an.")
 async def ping(interaction: discord.Interaction):
     latency = round(bot.latency * 1000)
     await interaction.response.send_message(f"🏓 Pong! Latenz: {latency}ms")
 
 
-# Würfelt eine Zahl zwischen 1 und einem Maximalwert (Standard: 100)
 @bot.tree.command(
     name="roll",
     description="Würfelt eine Zahl zwischen 1 und einem Maximalwert (Standard: 100).",
@@ -57,7 +60,61 @@ async def roll(interaction: discord.Interaction, max: int = 100):
     )
 
 
-# Voice-Channel Automatik
+# Reaction roles with support for multiple message IDs from the .env file
+
+# Rules-Message ID
+reaction_message_ids = [
+    int(message_id) for message_id in os.getenv("DISCORD_RULES_MESSAGE_ID").split("/")
+]
+# Reaction
+reaction_roles = {
+    "✅": "Verified",  # Emoji : Rolename
+}
+
+
+# Rules accepted - role added
+@bot.event
+async def on_raw_reaction_add(payload):
+    if payload.message_id not in reaction_message_ids:
+        return
+
+    guild = bot.get_guild(payload.guild_id)
+    if guild is None:
+        return
+
+    role_name = reaction_roles.get(str(payload.emoji))
+    if role_name:
+        role = discord.utils.get(guild.roles, name=role_name)
+        if role:
+            member = guild.get_member(payload.user_id)
+            if member and role not in member.roles:
+                await member.add_roles(role)
+                print(f"✅ Rolle {role_name} zu {member.display_name} hinzugefügt.")
+
+
+# Rules rejected - role removed
+@bot.event
+async def on_raw_reaction_remove(payload):
+    if payload.message_id not in reaction_message_ids:
+        return
+
+    guild = bot.get_guild(payload.guild_id)
+    if guild is None:
+        return
+
+    role_name = reaction_roles.get(str(payload.emoji))
+    if role_name:
+        role = discord.utils.get(guild.roles, name=role_name)
+        if role:
+            member = guild.get_member(payload.user_id)
+            if member and role in member.roles:
+                await member.remove_roles(role)
+                print(f"❌ Rolle {role_name} von {member.display_name} entfernt.")
+
+
+# Voice channel automatic
+
+
 @bot.event
 async def on_voice_state_update(member, before, after):
     if after.channel and str(after.channel.id) in ALLOWED_CHANNEL_IDS:
@@ -82,14 +139,11 @@ async def on_voice_state_update(member, before, after):
 
 @bot.event
 async def on_message(message):
-    print(f"Nachricht empfangen: {message.content}")  # Debug
-
     if message.author == bot.user:
         return
 
-    # CRAZY MEME
+    # Crazy-Meme
     if "crazy" in message.content.lower():
-        print("Meme-Trigger erkannt!")  # Debug
         meme_text = (
             "Crazy? I was crazy once. They locked me in a room. "
             "A rubber room. A rubber room with rats. "
@@ -100,7 +154,7 @@ async def on_message(message):
         embed.set_image(url="https://i.imgur.com/ZUN7Ko0.jpg")
         await message.channel.send(embed=embed)
 
-    # 🔥 GIF-Trigger
+    # Firefighter GIFs
     if "🔥" in message.content:
         api_key = os.getenv("TENOR_API_KEY", "LIVDSRZULELA")
 
@@ -126,5 +180,5 @@ async def on_message(message):
     await bot.process_commands(message)
 
 
-# Bot starten
+# Bot run
 bot.run(os.getenv("DISCORD_BOT_TOKEN"))
