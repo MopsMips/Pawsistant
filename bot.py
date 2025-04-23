@@ -80,28 +80,33 @@ async def on_voice_state_update(member, before, after):
 # Message-Events
 
 
-# Massage-Event für GIFs bei "🔥"
+# Message-Event für GIFs bei "🔥"
 @bot.event
 async def on_message(message):
     if message.author == bot.user:
         return
 
     if "🔥" in message.content:
+        api_key = os.getenv("TENOR_API_KEY", "LIVDSRZULELA")
+
         async with aiohttp.ClientSession() as session:
             async with session.get(
-                "https://g.tenor.com/v1/search?q=firefighter&key=LIVDSRZULELA&limit=10"
+                f"https://tenor.googleapis.com/v2/search?q=firefighter&key={api_key}&limit=50&random=true"
             ) as response:
                 if response.status == 200:
                     data = await response.json()
                     gifs = data.get("results")
                     if gifs:
                         try:
-                            gif_url = random.choice(gifs)["media"][0]["gif"]["url"]
+                            gif = random.choice(gifs)
+                            gif_url = gif["media_formats"]["gif"]["url"]
                             await message.channel.send(gif_url)
                         except (KeyError, IndexError):
                             await message.channel.send(
                                 "🚒 Uuups! Konnte kein GIF laden."
                             )
+                else:
+                    await message.channel.send("🚒 Fehler beim Laden der GIFs.")
 
     await bot.process_commands(message)
 
