@@ -80,12 +80,27 @@ async def on_voice_state_update(member, before, after):
 # Message-Events
 
 
-# Message-Event für GIFs bei "🔥"
 @bot.event
 async def on_message(message):
+    print(f"Nachricht empfangen: {message.content}")  # Debug
+
     if message.author == bot.user:
         return
 
+    # CRAZY MEME
+    if "crazy" in message.content.lower():
+        print("Meme-Trigger erkannt!")  # Debug
+        meme_text = (
+            "Crazy? I was crazy once. They locked me in a room. "
+            "A rubber room. A rubber room with rats. "
+            "And rats make me crazy..."
+        )
+
+        embed = discord.Embed(description=meme_text)
+        embed.set_image(url="https://i.imgur.com/ZUN7Ko0.jpg")
+        await message.channel.send(embed=embed)
+
+    # 🔥 GIF-Trigger
     if "🔥" in message.content:
         api_key = os.getenv("TENOR_API_KEY", "LIVDSRZULELA")
 
