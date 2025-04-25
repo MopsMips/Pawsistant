@@ -5,11 +5,10 @@ from dotenv import load_dotenv
 
 # Modules
 from commands import general
-from events import message_events, reaction_events, voice_events
+from events import message_events, reaction_events, voice_events, member_events
 
 # Load .env file
 load_dotenv()
-
 
 # Intents setup
 intents = discord.Intents.default()
@@ -25,12 +24,11 @@ bot = commands.Bot(command_prefix="/", intents=intents)
 # Bot Events
 @bot.event
 async def on_ready():
-    # Setup of all remote modules
     general.setup(bot.tree, bot)  # Slash Commands
     message_events.setup(bot)  # Message Events
     reaction_events.setup(bot)  # Reaction Events
-    voice_events.setup(bot)  # Voice Channel Automatic Creation
-
+    voice_events.setup(bot)  # Voice Channel Auto Creation
+    member_events.setup(bot)  # Member Welcome Messages
     await bot.tree.sync()
     print(f"✅ PawBot ist online als {bot.user}")
 
