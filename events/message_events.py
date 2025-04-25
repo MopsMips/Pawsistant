@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from utils.tenor import get_random_firefighter_gif
+from utils.tenor import get_tenor_gif
 
 
 def setup(bot: commands.Bot):
@@ -9,8 +9,11 @@ def setup(bot: commands.Bot):
         if message.author == bot.user:
             return
 
+        print(f"📥 Message received from {message.author}: {message.content}")
+
         # Crazy-Meme
         if "crazy" in message.content.lower():
+            print("😵 Crazy meme triggered!")
             meme_text = (
                 "Crazy? I was crazy once. They locked me in a room. "
                 "A rubber room. A rubber room with rats. "
@@ -23,10 +26,13 @@ def setup(bot: commands.Bot):
 
         # Firefighter GIFs
         if "🔥" in message.content:
-            gif_url = await get_random_firefighter_gif()
+            print("🔥 Fire emoji recognized! - Try to load...")
+            gif_url = await get_tenor_gif("firefighter")
             if gif_url:
+                print("✅ GIF loaded successfully.")
                 await message.channel.send(gif_url)
             else:
-                await message.channel.send("🚒 Fehler beim Laden des GIFs.")
+                print("❌ Error loading the GIF.")
+                await message.channel.send("🚒 Error loading the GIF.")
 
         await bot.process_commands(message)
