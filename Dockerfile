@@ -6,13 +6,19 @@ FROM python:3.11-slim
 # Arbeitsverzeichnis erstellen
 WORKDIR /app
 
-# Benötigte Dateien kopieren
+# System-Abhängigkeiten installieren
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    build-essential \
+    libffi-dev \
+    libssl-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Projektdateien kopieren
 COPY . /app
 
-# Abhängigkeiten installieren
+# Python-Abhängigkeiten installieren
 RUN pip install --no-cache-dir -r requirements.txt
 
-# .env Datei wird erwartet (kann über docker-compose bereitgestellt werden)
-
-# Bot starten
+# Startbefehl
 CMD ["python", "bot.py"]
