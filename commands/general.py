@@ -1,14 +1,29 @@
 import random
+import asyncio
 from discord import app_commands, Interaction
 from discord.ext import commands
 
 
-# Check if user has permission to manage messages
+# Check if user is allowed to manage messages
 async def has_manage_messages_permission(interaction: Interaction) -> bool:
     return interaction.user.guild_permissions.manage_messages
 
 
 def setup(tree: app_commands.CommandTree, bot: commands.Bot):
+
+    #  Global error handler for all slash commands
+    @tree.error
+    async def on_app_command_error(interaction: Interaction, error):
+        if isinstance(error, app_commands.errors.MissingPermissions):
+            await interaction.response.send_message(
+                "❌ Du hast keine Berechtigung, diesen Befehl zu nutzen.",
+                ephemeral=True,
+            )
+        else:
+            await interaction.response.send_message(
+                "❌ Ein unerwarteter Fehler ist aufgetreten.", ephemeral=True
+            )
+            raise error
 
     # Ping Command
     @tree.command(name="ping", description="Zeigt die Latenz des Bots an.")
@@ -16,7 +31,7 @@ def setup(tree: app_commands.CommandTree, bot: commands.Bot):
         latency = round(bot.latency * 1000)
         await interaction.response.send_message(f"🏓 Pong! Latenz: {latency}ms")
 
-    # Dice Roll Command
+    # Roll Command
     @tree.command(
         name="roll",
         description="Würfelt eine Zahl zwischen 1 und einem Maximalwert (Standard: 100).",
@@ -25,7 +40,7 @@ def setup(tree: app_commands.CommandTree, bot: commands.Bot):
     async def roll(interaction: Interaction, max: int = 100):
         if max < 1:
             await interaction.response.send_message(
-                "❌ Die maximale Zahl muss größer als 0 sein.", ephemeral=True
+                "❌ Bitte gib eine gültige Zahl größer als 0 an.", ephemeral=True
             )
             return
         number = random.randint(1, max)
@@ -33,7 +48,7 @@ def setup(tree: app_commands.CommandTree, bot: commands.Bot):
             f"🎲 {interaction.user.display_name} würfelt eine {number} (1–{max})!"
         )
 
-    # Clear Command (Admins)
+    # Clear Command (Admins only)
     @tree.command(
         name="clear",
         description="Löscht eine bestimmte Anzahl an Nachrichten. (Nur Admins)",
@@ -47,18 +62,13 @@ def setup(tree: app_commands.CommandTree, bot: commands.Bot):
             )
             return
 
+        await interaction.response.defer(ephemeral=True)
+
         deleted = await interaction.channel.purge(limit=amount)
-        await interaction.response.send_message(
-            f"🧹 {len(deleted)} Nachrichten wurden gelöscht.", ephemeral=True
+
+        confirmation = await interaction.followup.send(
+            f"🧹 {len(deleted)} Nachrichten wurden gelöscht."
         )
 
-    # Error handling for missing authorizations
-    @clear.error
-    async def clear_error(interaction: Interaction, error):
-        if isinstance(error, app_commands.errors.MissingPermissions):
-            await interaction.response.send_message(
-                "❌ Du hast keine Berechtigung, diesen Befehl zu nutzen.",
-                ephemeral=True,
-            )
-        else:
-            raise error
+        await asyncio.sleep(5)
+        await confirmation.delete()
