@@ -1,0 +1,24 @@
+# docker-compose.yml
+
+version: '3.9'
+
+services:
+  pawbot:
+    build: .
+    container_name: pawbot
+    restart: unless-stopped
+    environment:
+      - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}
+      - DISCORD_WELCOME_CHANNEL_IDS=${DISCORD_WELCOME_CHANNEL_IDS}
+      - DISCORD_RULES_MESSAGE_ID=${DISCORD_RULES_MESSAGE_ID}
+      - DISCORD_CREATE_CHANNEL_ID=${DISCORD_CREATE_CHANNEL_ID}
+      - TENOR_API_KEY=${TENOR_API_KEY}
+    volumes:
+      - ./logs:/app/logs  # Falls du Logs speichern möchtest
+      - ./.env:/app/.env  # Falls du .env lokal hast und mounten willst
+    networks:
+      - pawbot-net
+
+networks:
+  pawbot-net:
+    driver: bridge
