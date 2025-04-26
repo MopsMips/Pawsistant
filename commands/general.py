@@ -14,7 +14,7 @@ def setup(tree: app_commands.CommandTree, bot: commands.Bot):
     #  Global error handler for all slash commands
     @tree.error
     async def on_app_command_error(interaction: Interaction, error):
-        if isinstance(error, app_commands.errors.MissingPermissions):
+        if isinstance(error, app_commands.errors.CheckFailure):
             await interaction.response.send_message(
                 "❌ Du hast keine Berechtigung, diesen Befehl zu nutzen.",
                 ephemeral=True,
@@ -23,7 +23,7 @@ def setup(tree: app_commands.CommandTree, bot: commands.Bot):
             await interaction.response.send_message(
                 "❌ Ein unerwarteter Fehler ist aufgetreten.", ephemeral=True
             )
-            raise error
+        raise error
 
     # Ping Command
     @tree.command(name="ping", description="Zeigt die Latenz des Bots an.")
@@ -55,6 +55,7 @@ def setup(tree: app_commands.CommandTree, bot: commands.Bot):
     )
     @app_commands.describe(amount="Anzahl der zu löschenden Nachrichten")
     @app_commands.check(has_manage_messages_permission)
+    @app_commands.default_permissions(manage_messages=True)
     async def clear(interaction: Interaction, amount: int):
         if amount < 1:
             await interaction.response.send_message(
