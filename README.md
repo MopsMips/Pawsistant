@@ -1,7 +1,7 @@
 # 🐾 Pawsistant
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Discord](https://img.shields.io/discord/898088826134757426?logo=discord)](https://discord.gg/6dzteBrQyg)
+[![Discord](https://img.shields.io/discord/898088826134757426?label=Join%20Us%21&logo=discord)](https://discord.gg/6dzteBrQyg)
 
 A modern Discord bot for welcoming users, managing roles, creating private voice channels, and adding fun reactions!
 
