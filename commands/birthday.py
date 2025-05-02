@@ -79,7 +79,7 @@ class Birthday(commands.Cog):
             conn.commit()
             conn.close()
             await interaction.response.send_message(
-                f"🎂 Geburtstag gespeichert: {day:02d}.{month:02d}", ephemeral=True
+                f"🎂 Geburtstag gespeichert: {day:02d}.{month:02d}.", ephemeral=True
             )
 
         elif action == "info":
@@ -93,7 +93,7 @@ class Birthday(commands.Cog):
             conn.close()
             if row:
                 await interaction.response.send_message(
-                    f"📅 {target.display_name} hat am {row[0]:02d}.{row[1]:02d} Geburtstag.",
+                    f"📅 {target.display_name} hat am {row[0]:02d}.{row[1]:02d}. Geburtstag.",
                     ephemeral=not user,
                 )
             else:
@@ -128,7 +128,7 @@ class Birthday(commands.Cog):
             for uid, day, month in rows:
                 member = interaction.guild.get_member(uid)
                 name = member.display_name if member else f"<@{uid}>"
-                lines.append(f"{day:02d}.{month:02d} – {name}")
+                lines.append(f"{day:02d}.{month:02d}. – {name}")
 
             message = "📅 **Geburtstagsliste:**\n" + "\n".join(lines)
             await interaction.response.send_message(message)
