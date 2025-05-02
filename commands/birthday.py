@@ -59,6 +59,12 @@ class Birthday(commands.Cog):
         user_id = interaction.user.id
 
         if action == "set":
+            if user and user.id != interaction.user.id:
+                await interaction.response.send_message(
+                    "❌ Du kannst nur deinen eigenen Geburtstag setzen.", ephemeral=True
+                )
+                return
+
             if not day or not month or not (1 <= day <= 31) or not (1 <= month <= 12):
                 await interaction.response.send_message(
                     "❌ Ungültiges Datum.", ephemeral=True
