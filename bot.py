@@ -29,6 +29,10 @@ async def on_ready():
     reaction_events.setup(bot)  # Reaction Events
     voice_events.setup(bot)  # Voice Channel Auto Creation
     member_events.setup(bot)  # Member Welcome Messages
+
+    # Load all cogs
+    await bot.load_extension("commands.birthday")
+
     await bot.tree.sync()
     print(f"✅ PawBot ist online als {bot.user}")
 
