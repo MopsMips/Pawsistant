@@ -1,5 +1,3 @@
-# docker-compose.yml
-
 version: '3.9'
 
 services:
@@ -14,8 +12,9 @@ services:
       - DISCORD_CREATE_CHANNEL_ID=${DISCORD_CREATE_CHANNEL_ID}
       - TENOR_API_KEY=${TENOR_API_KEY}
     volumes:
-      - ./logs:/app/logs  # Falls du Logs speichern möchtest
-      - ./.env:/app/.env  # Falls du .env lokal hast und mounten willst
+      - ./logs:/app/logs
+      - ./.env:/app/.env
+      - ./birthdays.db:/app/birthdays.db
     networks:
       - pawbot-net
 
