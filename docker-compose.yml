@@ -14,7 +14,7 @@ services:
     volumes:
       - ./logs:/app/logs
       - ./.env:/app/.env
-    # - ./birthdays.db:/app/birthdays.db
+      - ./birthdays.db:/app/birthdays.db
     networks:
       - pawbot-net
 
