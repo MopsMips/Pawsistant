@@ -64,8 +64,12 @@ Or with Docker:
 ## 📂 Project Structure
 
 ```bash
-bot.py
+/assets/
+    bot_icon.png
+    bot_banner.png
 /commands/
+    __init__.py
+    general.py
     birthday.py
 /events/
     member_events.py
@@ -75,8 +79,11 @@ bot.py
 /utils/
     role_utils.py
     tenor.py
+bot.py    
+.gitignore
 Dockerfile
 docker-compose.yml
+requirements.txt
 .env.example
 README.md
 LICENSE
