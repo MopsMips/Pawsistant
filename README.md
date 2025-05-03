@@ -3,11 +3,12 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Discord](https://img.shields.io/discord/898088826134757426?label=Join%20Us%21&logo=discord)](https://discord.gg/6dzteBrQyg)
 
-A modern Discord bot for welcoming users, managing roles, creating private voice channels, and adding fun reactions!
+A modern Discord bot for welcoming users, managing roles, creating private voice channels, celebrating birthdays, and adding fun reactions!
 
 ## 🚀 Features
 
-- **Slash Commands**: `/ping`, `/roll`, `/clear`
+- **Slash Commands**: `/ping`, `/roll`, `/clear`, `/birthday`
+- **Birthday System**: Users can set, view, or remove their birthday. The bot sends automatic greetings and assigns a birthday role.
 - **Auto Voice Channel Creation**: Personalized voice channels for users
 - **Welcome Messages**: Custom welcome messages with GIFs
 - **Reaction Roles**: Auto-assign roles based on emoji reactions
@@ -44,6 +45,7 @@ A modern Discord bot for welcoming users, managing roles, creating private voice
    DISCORD_WELCOME_CHANNEL_IDS=1234567890/0987654321
    DISCORD_RULES_MESSAGE_ID=1234567890
    DISCORD_CREATE_CHANNEL_ID=1234567890
+   DISCORD_BIRTHDAY_CHANNEL_ID=1234567890/9876543210
    TENOR_API_KEY=your-tenor-api-key
    ```
 
@@ -63,6 +65,8 @@ Or with Docker:
 
 ```bash
 bot.py
+/commands/
+    birthday.py
 /events/
     member_events.py
     message_events.py
