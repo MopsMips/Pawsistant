@@ -22,7 +22,20 @@ welcome_messages = [
 def setup(bot: commands.Bot):
     @bot.event
     async def on_member_join(member: discord.Member):
-        # Channel-ID load from .env file
+        # Role assignment when joining
+        role_ids = os.getenv("DISCORD_AUTO_ROLE_IDS", "").split("/")
+        for role_id in role_ids:
+            try:
+                role = member.guild.get_role(int(role_id.strip()))
+                if role:
+                    await member.add_roles(role)
+                    print(f"✅ Rolle '{role.name}' an {member.display_name} vergeben.")
+                else:
+                    print(f"⚠️ Rolle mit ID {role_id.strip()} nicht gefunden.")
+            except ValueError:
+                print(f"❌ Ungültige Rollen-ID: {role_id}")
+
+        # Welcome message and GIF
         env_ids = os.getenv("DISCORD_WELCOME_CHANNEL_IDS", "")
         WELCOME_CHANNEL_IDS = [
             int(cid.strip()) for cid in env_ids.split("/") if cid.strip()
