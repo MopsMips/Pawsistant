@@ -10,6 +10,7 @@ A modern Discord bot for welcoming users, managing roles, creating private voice
 - **Slash Commands**: `/ping`, `/roll`, `/clear`, `/birthday`
 - **Birthday System**: Users can set, view, or remove their birthday. The bot sends automatic greetings and assigns a birthday role.
 - **Auto Voice Channel Creation**: Personalized voice channels for users
+- **Auto Role Assignment**: Automatically gives roles to new users using role IDs
 - **Welcome Messages**: Custom welcome messages with GIFs
 - **Reaction Roles**: Auto-assign roles based on emoji reactions
 - **Tenor GIF Integration**: Fun GIFs triggered by keywords
@@ -47,6 +48,7 @@ A modern Discord bot for welcoming users, managing roles, creating private voice
    DISCORD_CREATE_CHANNEL_ID=1234567890
    DISCORD_BIRTHDAY_CHANNEL_ID=1234567890/9876543210
    TENOR_API_KEY=your-tenor-api-key
+   DISCORD_AUTO_ROLE_IDS=111111111111111111/222222222222222222
    ```
 
 4. Run the bot:
@@ -58,6 +60,26 @@ Or with Docker:
    ```bash
    docker-compose up --build
    ```
+
+---
+
+## 📥 Auto Role Assignment (New Members)
+
+When a new user joins the server, the bot can automatically assign one or more roles using role IDs.
+
+### Setup
+
+In your `.env` file, add:
+
+```env
+DISCORD_AUTO_ROLE_IDS=111111111111111111/222222222222222222
+```
+
+- Use `/` to separate multiple role IDs.
+
+- Make sure your bot has the Manage Roles permission.
+
+- The bot's highest role must be above the roles it's trying to assign.
 
 ---
 
